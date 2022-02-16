@@ -1,4 +1,4 @@
-<%- content_for(:title, I18n.transliterate("Stundenzettel #{@selected_client["name"]} #{Date.today.strftime}")) %>
+<%- content_for(:title, I18n.transliterate("Zeiterfassung #{@selected_client["name"]} #{Date.today.strftime}")) %>
 <div class="no-print">
 <%= form_for :filter, method: :get do |f| %>
   <%= f.label :client %>
@@ -15,23 +15,37 @@ Selected client: <%= @selected_client["name"] %>
   <thead>
     <tr>
       <th>Datum</th>
-      <th>Aufgabe</th>
       <th>Beschreibung</th>
       <th class="right">Dauer (h)</th>
+      <% if @total_hours_non_billable > 0 %>
+      <th class="right">Ohne Berechnung (h)</th>
+      <% end %>
     </tr>
   </thead>
   <tbody>
     <% @time_entries.each do |entry| %>
+    <% if entry["project"] == "Teletaster IRP" %>
       <tr>
         <td><%= l Date.parse entry["date"] %></td>
-        <td><%= entry["task"] %></td>
-        <td><%= entry["notes"] %></td>
-        <td class="right"><%= number_with_precision entry["hours"], precision: 2 %></td>
+        <td><%= (entry["notes"] || '').gsub(/[\r\n]+/, "<br>").html_safe %></td>
+        <% if entry['billable'] %>
+          <td class="right"><%= number_with_precision entry["hours"], precision: 1 %></td>
+          <% if @total_hours_non_billable > 0 %>
+          <td></td>
+          <% end %>
+        <% else %>
+          <td></td>
+          <td class="right"><%= number_with_precision entry["hours"], precision: 1 %></td>
+        <% end %>
       </tr>
     <% end %>
+    <% end %>
     <tr class="final">
-      <td colspan="3"><strong>Gesamt</strong></td>
-      <td class="right"><strong><%= number_with_precision @total_hours, precision: 2 %></strong></td>
+      <td colspan="2"><strong>Gesamt</strong></td>
+      <td class="right"><strong><%= number_with_precision @total_hours_billable, precision: 1 %></strong></td>
+      <% if @total_hours_non_billable > 0 %>
+      <td class="right"><strong><%= number_with_precision @total_hours_non_billable, precision: 1 %></strong></td>
+      <% end %>
     </tr>
   </tbody>
 </table>
