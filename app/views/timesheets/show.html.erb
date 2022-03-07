@@ -4,9 +4,11 @@
   <%= f.label :client %>
   <br/>
   <%= f.select :client_id, @clients.map {|c| [c["name"], c["id"]] }, {}, {onchange: "this.form.submit()"} %>
+  <%= f.select :user_id, @users.map {|c| [c["first_name"], c["id"]] }, {}, {onchange: "this.form.submit()"} %>
 <% end %>
 
-Selected client: <%= @selected_client["name"] %>
+Selected client: <%= @selected_client["name"] %><br />
+Selected user: <%= @selected_user ? @selected_user["first_name"] : "-" %><br />
 
 <hr>
 </div>

@@ -21,15 +21,19 @@ module Harvest
       JSON.parse(self.class.get('/clients', @options).body)['clients']
     end
 
+    def users
+      JSON.parse(self.class.get('/users', @options).body)['users']
+    end
+
     # https://help.getharvest.com/api-v2/timesheets-api/timesheets/time-entries/
-    def time_entries(client_id:)
+    def time_entries(params)
       current_page = 0
       response = nil
       entries = []
 
       while current_page == 0 || response['total_pages'] > current_page
         current_page += 1
-        response = fetch_entries(client_id, current_page)
+        response = fetch_entries(params.merge({ page: current_page }))
         entries.push(*response['time_entries'])
       end
       entries.reverse
@@ -37,12 +41,9 @@ module Harvest
 
     private
 
-    def fetch_entries(client_id, page)
+    def fetch_entries(params)
       JSON.parse(self.class.get('/time_entries', @options.deep_merge(
-        query: {
-          client_id: client_id,
-          page: page
-        }
+        query: params
       )).body)
     end
   end
