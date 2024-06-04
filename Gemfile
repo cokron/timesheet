@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.6.6'
+ruby '2.6.10'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.0.0'
@@ -25,6 +25,7 @@ gem 'bootsnap', '>= 1.4.2', require: false
 
 gem 'httparty'
 gem 'rails-i18n'
+gem 'mimemagic', path: '/Users/cokron/.asdf/installs/ruby/2.6.10/lib/ruby/gems/2.6.0/gems/mimemagic-0.3.3'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

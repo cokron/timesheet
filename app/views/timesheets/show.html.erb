@@ -4,7 +4,7 @@
   <%= f.label :client %>
   <br/>
   <%= f.select :client_id, @clients.map {|c| [c["name"], c["id"]] }, {}, {onchange: "this.form.submit()"} %>
-  <%= f.select :user_id, @users.map {|c| [c["first_name"], c["id"]] }, {}, {onchange: "this.form.submit()"} %>
+  <%= f.select :user_id, @users.map {|c| [c["first_name"], c["id"]] }, {include_blank: true}, {onchange: "this.form.submit()"}%>
 <% end %>
 
 Selected client: <%= @selected_client["name"] %><br />
@@ -13,10 +13,14 @@ Selected user: <%= @selected_user ? @selected_user["first_name"] : "-" %><br />
 <hr>
 </div>
 
+<% show_project = false %>
 <table>
   <thead>
     <tr>
       <th>Datum</th>
+      <% if show_project %>
+        <th>Projekt</th>
+      <% end %>
       <th>Beschreibung</th>
       <th class="right">Dauer (h)</th>
       <% if @total_hours_non_billable > 0 %>
@@ -26,9 +30,11 @@ Selected user: <%= @selected_user ? @selected_user["first_name"] : "-" %><br />
   </thead>
   <tbody>
     <% @time_entries.each do |entry| %>
-    <% if entry["project"] == "Teletaster IRP" %>
       <tr>
         <td><%= l Date.parse entry["date"] %></td>
+        <% if show_project %>
+          <td><%= (entry["project"] || '').html_safe %></td>
+        <% end %>
         <td><%= (entry["notes"] || '').gsub(/[\r\n]+/, "<br>").html_safe %></td>
         <% if entry['billable'] %>
           <td class="right"><%= number_with_precision entry["hours"], precision: 1 %></td>
@@ -41,9 +47,12 @@ Selected user: <%= @selected_user ? @selected_user["first_name"] : "-" %><br />
         <% end %>
       </tr>
     <% end %>
-    <% end %>
+
     <tr class="final">
       <td colspan="2"><strong>Gesamt</strong></td>
+      <% if show_project %>
+        <td></td>
+      <% end %>
       <td class="right"><strong><%= number_with_precision @total_hours_billable, precision: 1 %></strong></td>
       <% if @total_hours_non_billable > 0 %>
       <td class="right"><strong><%= number_with_precision @total_hours_non_billable, precision: 1 %></strong></td>
