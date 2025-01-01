@@ -1,6 +1,6 @@
 class TimesheetsController < ApplicationController
   def show
-    @clients = harvest_api.clients.sort_by{|c| c['name']}
+    @clients = harvest_api.clients.sort_by{|c| c['name'].downcase}
     @users = harvest_api.users.sort_by{|c| c['first_name']}
     @selected_client = @clients.find {|c| c['id'].to_s == params.dig(:filter, :client_id) } || @clients.first
     @selected_user = @users.find {|c| c['id'].to_s == params.dig(:filter, :user_id) } || nil
@@ -33,6 +33,7 @@ class TimesheetsController < ApplicationController
           'notes' => e['notes'],
           'hours' => e['rounded_hours'],
           'billable' => e['billable'],
+          'user' => e['user']['name'],
         }
       }
       .group_by {|e| [e['date'], e['client'], e['billable'], e['notes']] }

@@ -14,12 +14,16 @@ Selected user: <%= @selected_user ? @selected_user["first_name"] : "-" %><br />
 </div>
 
 <% show_project = false %>
+<% show_user = true %>
 <table>
   <thead>
     <tr>
       <th>Datum</th>
       <% if show_project %>
         <th>Projekt</th>
+      <% end %>
+      <% if show_user %>
+        <th>Mitarbeiter</th>
       <% end %>
       <th>Beschreibung</th>
       <th class="right">Dauer (h)</th>
@@ -34,6 +38,9 @@ Selected user: <%= @selected_user ? @selected_user["first_name"] : "-" %><br />
         <td><%= l Date.parse entry["date"] %></td>
         <% if show_project %>
           <td><%= (entry["project"] || '').html_safe %></td>
+        <% end %>
+        <% if show_user %>
+          <td nowrap><%= (entry["user"] || '').html_safe %></td>
         <% end %>
         <td><%= (entry["notes"] || '').gsub(/[\r\n]+/, "<br>").html_safe %></td>
         <% if entry['billable'] %>
@@ -51,6 +58,9 @@ Selected user: <%= @selected_user ? @selected_user["first_name"] : "-" %><br />
     <tr class="final">
       <td colspan="2"><strong>Gesamt</strong></td>
       <% if show_project %>
+        <td></td>
+      <% end %>
+      <% if show_user %>
         <td></td>
       <% end %>
       <td class="right"><strong><%= number_with_precision @total_hours_billable, precision: 1 %></strong></td>
